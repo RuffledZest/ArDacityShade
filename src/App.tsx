@@ -8,7 +8,7 @@ function App() {
         <Outlet />
       </div>
     </WalletProvider>
-  );
+  );  
 }
 
 export default App;

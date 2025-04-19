@@ -43,6 +43,10 @@ async function connectToMongo() {
 }
 
 // API Routes
+app.get('/api', (req, res) => {
+  res.send('ArDacity Component API is running.');
+});
+
 
 // Get all components
 app.get('/api/components', async (req, res) => {
@@ -173,22 +177,36 @@ app.put('/api/components/:id', async (req, res) => {
 });
 
 // Delete a component
-app.delete('/api/components/:id', async (req, res) => {
+// Delete a category
+app.delete('/api/categories/:name', async (req, res) => {
   try {
-    const result = await db.collection('components').deleteOne({
-      _id: new ObjectId(req.params.id)
+    const categoryName = req.params.name;
+
+    // Check if any component is using this category
+    const componentsWithCategory = await db.collection('components').countDocuments({
+      category: categoryName
     });
-    
-    if (result.deletedCount === 0) {
-      return res.status(404).json({ error: 'Component not found' });
+
+    if (componentsWithCategory > 0) {
+      return res.status(400).json({
+        error: `Cannot delete category "${categoryName}" because it is used by ${componentsWithCategory} component(s)`
+      });
     }
-    
+
+    // Delete the category
+    const result = await db.collection('categories').deleteOne({ name: categoryName });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Category not found' });
+    }
+
     res.status(204).end();
   } catch (err) {
-    console.error(`Error deleting component ${req.params.id}:`, err);
-    res.status(500).json({ error: 'Failed to delete component' });
+    console.error(`Error deleting category ${req.params.name}:`, err);
+    res.status(500).json({ error: 'Failed to delete category' });
   }
 });
+
 
 // Create a new variant for a component
 app.post('/api/components/:id/variants', async (req, res) => {
