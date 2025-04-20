@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Code, Eye, Copy, Check, Trash, Edit } from 'lucide-react';
+import { Code, Eye, Copy, Check, Trash, Edit, Package } from 'lucide-react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
@@ -9,6 +9,8 @@ interface ComponentCardProps {
   code: string;
   author?: string;
   deployedLink?: string;
+  packageCommands?: string;
+  imageUrl?: string;
   componentId?: string;
   variantId?: string;
   onEdit?: (componentId: string, variantId: string) => void;
@@ -22,14 +24,17 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
   code,
   author,
   deployedLink,
+  packageCommands,
+  
   componentId,
   variantId,
   onEdit,
   onDelete,
   isAdmin = false
 }) => {
-  const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
+  const [activeTab, setActiveTab] = useState<'preview' | 'code' | 'packages'>('preview');
   const [isCopied, setIsCopied] = useState(false);
+  const [isPackageCopied, setIsPackageCopied] = useState(false);
 
   // Handle copy code to clipboard
   const handleCopyCode = () => {
@@ -37,6 +42,16 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     });
+  };
+
+  // Handle copy package commands to clipboard
+  const handleCopyPackageCommands = () => {
+    if (packageCommands) {
+      navigator.clipboard.writeText(packageCommands).then(() => {
+        setIsPackageCopied(true);
+        setTimeout(() => setIsPackageCopied(false), 2000);
+      });
+    }
   };
 
   // Handle edit component
@@ -85,6 +100,12 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
       
       <p className="text-gray-400 mb-4">{description}</p>
       
+      {/* {imageUrl && (
+        <div className="mb-4 rounded-lg overflow-hidden border border-gray-800">
+          <img src={imageUrl} alt={title} className="w-full h-auto object-cover max-h-[300px]" />
+        </div>
+      )} */}
+      
       <div className="border border-gray-800 rounded-lg overflow-hidden">
         {/* Tabs */}
         <div className="flex items-center justify-between bg-gray-900 border-b border-gray-800 px-4 py-2">
@@ -111,6 +132,19 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
               <Code size={16} className="mr-1.5" />
               Code
             </button>
+            {packageCommands && (
+              <button
+                onClick={() => setActiveTab('packages')}
+                className={`flex items-center px-3 py-1 text-sm rounded-md ${
+                  activeTab === 'packages'
+                    ? 'bg-gray-800 text-white'
+                    : 'text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                <Package size={16} className="mr-1.5" />
+                Packages
+              </button>
+            )}
           </div>
           
           {activeTab === 'code' && (
@@ -120,6 +154,26 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
               title="Copy code to clipboard"
             >
               {isCopied ? (
+                <>
+                  <Check size={16} className="mr-1.5 text-green-500" />
+                  <span className="text-green-500">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Copy size={16} className="mr-1.5" />
+                  <span>Copy</span>
+                </>
+              )}
+            </button>
+          )}
+          
+          {activeTab === 'packages' && (
+            <button
+              onClick={handleCopyPackageCommands}
+              className="flex items-center px-3 py-1 text-sm rounded-md text-gray-400 hover:text-white hover:bg-gray-800"
+              title="Copy package commands to clipboard"
+            >
+              {isPackageCopied ? (
                 <>
                   <Check size={16} className="mr-1.5 text-green-500" />
                   <span className="text-green-500">Copied!</span>
@@ -152,7 +206,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
                 </div>
               )}
             </div>
-          ) : (
+          ) : activeTab === 'code' ? (
             <SyntaxHighlighter
               language="jsx"
               style={atomOneDark}
@@ -164,6 +218,19 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
               }}
             >
               {code}
+            </SyntaxHighlighter>
+          ) : (
+            <SyntaxHighlighter
+              language="bash"
+              style={atomOneDark}
+              customStyle={{
+                borderRadius: '4px',
+                margin: 0,
+                padding: '16px',
+                background: '#0d1117'
+              }}
+            >
+              {packageCommands || '# No package commands specified'}
             </SyntaxHighlighter>
           )}
         </div>

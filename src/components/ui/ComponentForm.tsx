@@ -11,6 +11,8 @@ interface ComponentFormProps {
     code: string;
     author: string;
     deployedLink: string;
+    packageCommands: string;
+    imageUrl: string;
     isNewComponent: boolean;
   }) => Promise<void>;
   onCancel: () => void;
@@ -22,6 +24,8 @@ interface ComponentFormProps {
     code?: string;
     author?: string;
     deployedLink?: string;
+    packageCommands?: string;
+    imageUrl?: string;
   };
 }
 
@@ -39,6 +43,8 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
   const [code, setCode] = useState(initialData.code || '');
   const [author, setAuthor] = useState(initialData.author || '');
   const [deployedLink, setDeployedLink] = useState(initialData.deployedLink || '');
+  const [packageCommands, setPackageCommands] = useState(initialData.packageCommands || '');
+  const [imageUrl, setImageUrl] = useState(initialData.imageUrl || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,6 +60,8 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
         code,
         author,
         deployedLink,
+        packageCommands,
+        imageUrl,
         isNewComponent
       });
     } catch (error) {
@@ -199,6 +207,40 @@ const ComponentForm: React.FC<ComponentFormProps> = ({
             placeholder="https://example.com/component-preview"
           />
           <p className="mt-1 text-xs text-gray-500">URL where this component is deployed for preview</p>
+        </div>
+        
+        {/* Package Commands */}
+        <div className="mb-6">
+          <label htmlFor="packageCommands" className="block text-sm font-medium text-gray-300 mb-2">
+            Package Commands
+          </label>
+          <textarea
+            id="packageCommands"
+            value={packageCommands}
+            onChange={(e) => setPackageCommands(e.target.value)}
+            rows={3}
+            className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="npm install package1 package2 --save"
+            required
+          />
+          <p className="mt-1 text-xs text-gray-500">Specify any npm or package installation commands required for this component</p>
+        </div>
+        
+        {/* Component Image */}
+        <div className="mb-6">
+          <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-300 mb-2">
+            Component Image URL
+          </label>
+          <input
+            id="imageUrl"
+            type="url"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            className="w-full bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="https://example.com/image.png"
+            required
+          />
+          <p className="mt-1 text-xs text-gray-500">URL of an image that represents this component (required)</p>
         </div>
         
         {/* Code */}

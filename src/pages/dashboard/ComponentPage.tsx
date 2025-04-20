@@ -31,6 +31,8 @@ const ComponentPage: React.FC = () => {
     code: string;
     author: string;
     deployedLink: string;
+    packageCommands: string;
+    imageUrl: string;
   } | null>(null);
   
   // Format the category name for display
@@ -70,6 +72,8 @@ const ComponentPage: React.FC = () => {
     code: string;
     author: string;
     deployedLink: string;
+    packageCommands: string;
+    imageUrl: string;
     isNewComponent: boolean;
   }) => {
     try {
@@ -83,7 +87,9 @@ const ComponentPage: React.FC = () => {
             description: formData.description,
             code: formData.code,
             author: formData.author,
-            deployedLink: formData.deployedLink
+            deployedLink: formData.deployedLink,
+            packageCommands: formData.packageCommands,
+            imageUrl: formData.imageUrl
           }
         );
         
@@ -99,7 +105,9 @@ const ComponentPage: React.FC = () => {
                   description: updatedVariant.description,
                   code: updatedVariant.code,
                   author: updatedVariant.author || '',
-                  deployedLink: updatedVariant.deployedLink || ''
+                  deployedLink: updatedVariant.deployedLink || '',
+                  packageCommands: updatedVariant.packageCommands || '',
+                  imageUrl: updatedVariant.imageUrl || ''
                 } : v
               )
             };
@@ -119,7 +127,9 @@ const ComponentPage: React.FC = () => {
             description: formData.description,
             code: formData.code,
             author: formData.author,
-            deployedLink: formData.deployedLink
+            deployedLink: formData.deployedLink,
+            packageCommands: formData.packageCommands,
+            imageUrl: formData.imageUrl
           }]
         });
         
@@ -131,7 +141,9 @@ const ComponentPage: React.FC = () => {
           description: formData.description,
           code: formData.code,
           author: formData.author,
-          deployedLink: formData.deployedLink
+          deployedLink: formData.deployedLink,
+          packageCommands: formData.packageCommands,
+          imageUrl: formData.imageUrl
         });
         
         // Update the local state with the new variant
@@ -169,7 +181,9 @@ const ComponentPage: React.FC = () => {
       description: variant.description,
       code: variant.code,
       author: variant.author || '',
-      deployedLink: variant.deployedLink || ''
+      deployedLink: variant.deployedLink || '',
+      packageCommands: variant.packageCommands || '',
+      imageUrl: variant.imageUrl || ''
     });
     
     setShowForm(true);
@@ -292,6 +306,8 @@ const ComponentPage: React.FC = () => {
                 code={variant.code}
                 author={variant.author}
                 deployedLink={variant.deployedLink}
+                packageCommands={variant.packageCommands}
+                imageUrl={variant.imageUrl}
                 componentId={component._id}
                 variantId={variant._id}
                 onEdit={handleEditVariant}

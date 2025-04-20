@@ -211,11 +211,11 @@ app.delete('/api/categories/:name', async (req, res) => {
 // Create a new variant for a component
 app.post('/api/components/:id/variants', async (req, res) => {
   try {
-    const { name, description, code, author, deployedLink } = req.body;
+    const { name, description, code, author, deployedLink, packageCommands, imageUrl } = req.body;
     
     // Validate required fields
-    if (!name || !code) {
-      return res.status(400).json({ error: 'Name and code are required' });
+    if (!name || !code || !imageUrl) {
+      return res.status(400).json({ error: 'Name, code, and image are required' });
     }
     
     const now = new Date();
@@ -233,6 +233,8 @@ app.post('/api/components/:id/variants', async (req, res) => {
             code,
             author: author || 'Anonymous',
             deployedLink: deployedLink || '',
+            packageCommands: packageCommands || '',
+            imageUrl,
             createdAt: now,
             updatedAt: now
           }
@@ -261,7 +263,7 @@ app.post('/api/components/:id/variants', async (req, res) => {
 // Update an existing variant
 app.put('/api/components/:id/variants/:variantId', async (req, res) => {
   try {
-    const { name, description, code, author, deployedLink } = req.body;
+    const { name, description, code, author, deployedLink, packageCommands, imageUrl } = req.body;
     const now = new Date();
     
     // Update fields to set
@@ -271,6 +273,8 @@ app.put('/api/components/:id/variants/:variantId', async (req, res) => {
     if (code) updateFields['variants.$.code'] = code;
     if (author) updateFields['variants.$.author'] = author;
     if (deployedLink !== undefined) updateFields['variants.$.deployedLink'] = deployedLink;
+    if (packageCommands !== undefined) updateFields['variants.$.packageCommands'] = packageCommands;
+    if (imageUrl) updateFields['variants.$.imageUrl'] = imageUrl;
     updateFields['variants.$.updatedAt'] = now;
     updateFields['updatedAt'] = now;
     

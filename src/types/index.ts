@@ -6,6 +6,8 @@ export interface ComponentVariant {
   code: string;
   author?: string;
   deployedLink?: string;
+  packageCommands?: string;
+  imageUrl?: string;
   componentId?: string;
   createdAt?: Date;
   updatedAt?: Date;
